@@ -6,6 +6,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 public class NotesModel implements Parcelable {
@@ -26,10 +27,10 @@ public class NotesModel implements Parcelable {
         this.title = in.readString();
         this.content = in.readString();
         // значение memoDate собираем из миллисекунд и таймзоны
-        this.memoDate = new Calendar(TimeZone.getTimeZone(in.readString()));
+        this.memoDate = new GregorianCalendar(TimeZone.getTimeZone(in.readString()));
         this.memoDate.setTimeInMillis(in.readLong());
         // значение createDate собираем из миллисекунд и таймзоны
-        this.createDate = new Calendar(TimeZone.getTimeZone(in.readString()));
+        this.createDate = new GregorianCalendar(TimeZone.getTimeZone(in.readString()));
         this.createDate.setTimeInMillis(in.readLong());
     }
 

@@ -5,4 +5,10 @@
         <item>Заметка 2</item>
         <item>Заметка 3</item>
     </string-array>
+
+    <string-array name="contents">
+        <item>ЕС включил двоих россиян в список санкций за нарушение прав человека</item>
+        <item>Следствие попросило суд арестовать губернатора Белозерцева</item>
+        <item>Песков оценил возможность отключения России от SWIFT</item>
+    </string-array>
 </resources>
