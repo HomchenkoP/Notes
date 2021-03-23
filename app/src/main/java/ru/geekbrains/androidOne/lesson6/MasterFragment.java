@@ -22,29 +22,9 @@ import com.google.android.material.textview.MaterialTextView;
 
 public class MasterFragment extends Fragment {
 
-    public static final String CURRENT_NOTE = "CurrentNote";
+    public static final String CURRENT_NOTE_KEY = "CurrentNote";
     private int currentPosition = 0; // Текущая позиция (выбранная заметка)
     private boolean isLandscape;
-
-    // activity создана, можно к ней обращаться. Выполним начальные действия
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        // Определение, можно ли будет расположить содержимое заметки рядом справа в другом фрагменте
-        isLandscape = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
-
-        // Если это не первое создание, то восстановим текущую позицию
-        if (savedInstanceState != null) {
-            // Восстановление текущей позиции.
-            currentPosition = savedInstanceState.getInt(CURRENT_NOTE, 0);
-        }
-
-        // Если можно, то сделаем это
-        if (isLandscape) {
-            showNoteLand(0);
-        }
-    }
 
     // При создании фрагмента укажем его макет
     @Override
@@ -62,12 +42,11 @@ public class MasterFragment extends Fragment {
 
     // создаём список заголовков заметок на экране из массива в ресурсах
     private void initList(View view) {
-        //NestedScrollView layoutView = (NestedScrollView)view;
-        LinearLayout layoutView = (LinearLayout)view;
+        LinearLayout layoutView = view.findViewById(R.id.master_container);
         String[] titles = getResources().getStringArray(R.array.titles);
 
         // В цикле создаём элемент TextView, заполняем его значениями, и добавляем на экран.
-        for(int i=0; i < titles.length; i++){
+        for(int i = 0; i < titles.length; i++) {
             MaterialTextView title = new MaterialTextView(getContext());
             title.setText(titles[i]);
             title.setTextSize(30);
@@ -114,10 +93,30 @@ public class MasterFragment extends Fragment {
         startActivity(intent);
     }
 
+    // activity создана, можно к ней обращаться. Выполним начальные действия
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        // Если это не первое создание, то восстановим текущую позицию
+        if (savedInstanceState != null) {
+            // Восстановление текущей позиции.
+            currentPosition = savedInstanceState.getInt(CURRENT_NOTE_KEY, 0);
+        }
+
+        // Определение ориентации
+        isLandscape = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+
+        // Если ландшафтная ориентация, то располагаем содержимое заметки рядом справа в другом фрагменте
+        if (isLandscape) {
+            showNoteLand(currentPosition);
+        }
+    }
+
     // Сохраним текущую позицию (вызывается перед выходом из фрагмента)
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putInt(CURRENT_NOTE, currentPosition);
+        outState.putInt(CURRENT_NOTE_KEY, currentPosition);
         super.onSaveInstanceState(outState);
     }
 }

@@ -2,15 +2,19 @@
 <!-- 4. Добавьте фрагмент, в котором открывается заметка. По аналогии с примером из урока:
      если нажать на элемент списка в портретной ориентации — открывается новое окно,
      если нажать в ландшафтной — окно открывается рядом. -->
+
+<!-- это макет для портретной ориентации -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".DetailActivity">
 
-    <!-- Эта activity для показа в портретной ориентации -->
+    <!-- в портретной ориентации у activity только один фрагмент -->
+    <!-- Фрагмент с содержимым выбранной заметки -->
     <FrameLayout
-        android:id="@+id/fragment_container"
+        android:id="@+id/detail_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"/>
+
 </FrameLayout>

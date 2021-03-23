@@ -1,23 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- 2. Создайте фрагмент для вывода этих данных. -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<!-- Фрагмент со списком заметок -->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    tools:context=".MasterFragment">
 
-</LinearLayout>
-    <!--
-    <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout
+        android:id="@+id/master_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".MasterFragment">
+        android:orientation="vertical"/>
 
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
-    -->
+</androidx.core.widget.NestedScrollView>

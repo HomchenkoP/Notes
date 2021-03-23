@@ -32,7 +32,7 @@ public class DetailActivity extends AppCompatActivity {
             // Чтобы программно вставить фрагмент, надо получить «Менеджер фрагментов», затем открыть транзакцию, вставить макет и закрыть транзакцию.
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.fragment_container, detailFragment).commit();
+                    .replace(R.id.detail_container, detailFragment).commit();
         }
     }
 }
