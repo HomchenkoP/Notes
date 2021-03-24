@@ -1,12 +1,12 @@
 package ru.geekbrains.androidOne.lesson6;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.google.android.material.textview.MaterialTextView;
 
@@ -22,8 +23,8 @@ import com.google.android.material.textview.MaterialTextView;
 
 public class MasterFragment extends Fragment {
 
-    public static final String CURRENT_NOTE_KEY = "CurrentNote";
-    private int currentPosition = 0; // Текущая позиция (выбранная заметка)
+    public static final String KEY_CURRENT_NOTE = "CurrentNote";
+    private NotesModel currentNote; // Текущая позиция (выбранная заметка)
     private boolean isLandscape;
 
     // При создании фрагмента укажем его макет
@@ -56,25 +57,27 @@ public class MasterFragment extends Fragment {
             title.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    currentPosition = fi;
-                    showNote(currentPosition);
+                    currentNote = new NotesModel(getResources().getStringArray(R.array.titles)[fi],
+                                                 getResources().getStringArray(R.array.contents)[fi],
+                                                 null, null);
+                    showNote(currentNote);
                 }
             });
         }
     }
 
-    private void showNote(int index) {
+    private void showNote(NotesModel currentNote) {
         if (isLandscape) {
-            showNoteLand(index);
+            showNoteLand(currentNote);
         } else {
-            showNotePort(index);
+            showNotePort(currentNote);
         }
     }
 
     // Показать заметку в ландшафтной ориентации
-    private void showNoteLand(int index) {
+    private void showNoteLand(NotesModel currentNote) {
         // Создаём новый фрагмент с текущей позицией
-        DetailFragment detailFragment = DetailFragment.newInstance(index);
+        DetailFragment detailFragment = DetailFragment.newInstance(currentNote);
         // Выполняем транзакцию по замене фрагмента
         FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -84,13 +87,14 @@ public class MasterFragment extends Fragment {
     }
 
     // Показать заметку в портретной ориентации.
-    private void showNotePort(int index) {
+    private void showNotePort(NotesModel currentNote) {
         // Откроем вторую activity
         Intent intent = new Intent();
         intent.setClass(getActivity(), DetailActivity.class);
         // и передадим туда параметры
-        intent.putExtra(DetailFragment.ARG_INDEX, index);
-        startActivity(intent);
+        intent.putExtra(DetailFragment.ARG_NOTE, currentNote);
+        Toast.makeText(getActivity(), "Вызов startActivity(intent) приводит к ошибке.", Toast.LENGTH_SHORT).show();
+        //startActivity(intent);
     }
 
     // activity создана, можно к ней обращаться. Выполним начальные действия
@@ -101,7 +105,12 @@ public class MasterFragment extends Fragment {
         // Если это не первое создание, то восстановим текущую позицию
         if (savedInstanceState != null) {
             // Восстановление текущей позиции.
-            currentPosition = savedInstanceState.getInt(CURRENT_NOTE_KEY, 0);
+            currentNote = savedInstanceState.getParcelable(KEY_CURRENT_NOTE);
+        } else {
+            // Если восстановить не удалось, то сделаем объект с первым индексом
+            currentNote = new NotesModel(getResources().getStringArray(R.array.titles)[0],
+                                         getResources().getStringArray(R.array.contents)[0],
+                                         null, null);
         }
 
         // Определение ориентации
@@ -109,14 +118,14 @@ public class MasterFragment extends Fragment {
 
         // Если ландшафтная ориентация, то располагаем содержимое заметки рядом справа в другом фрагменте
         if (isLandscape) {
-            showNoteLand(currentPosition);
+            showNoteLand(currentNote);
         }
     }
 
     // Сохраним текущую позицию (вызывается перед выходом из фрагмента)
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putInt(CURRENT_NOTE_KEY, currentPosition);
+        outState.putParcelable(KEY_CURRENT_NOTE, currentNote);
         super.onSaveInstanceState(outState);
     }
 }

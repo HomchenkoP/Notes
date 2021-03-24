@@ -1,6 +1,5 @@
 package ru.geekbrains.androidOne.lesson6;
 
-import android.content.res.TypedArray;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -11,6 +10,8 @@ import android.view.ViewGroup;
 
 import com.google.android.material.textview.MaterialTextView;
 
+import java.util.Calendar;
+
 // 4. Добавьте фрагмент, в котором открывается заметка. По аналогии с примером из урока:
 //    если нажать на элемент списка в портретной ориентации — открывается новое окно,
 //    если нажать в ландшафтной — окно открывается рядом.
@@ -18,17 +19,17 @@ import com.google.android.material.textview.MaterialTextView;
 public class DetailFragment extends Fragment {
 
     // the fragment initialization parameters
-    protected static final String ARG_INDEX = "index";
-    private int index;
+    protected static final String ARG_NOTE = "note";
+    private NotesModel note;
 
     // Фабричный метод создания фрагмента
     // Фрагменты рекомендуется создавать через фабричные методы.
-    public static DetailFragment newInstance(int index) {
+    public static DetailFragment newInstance(NotesModel note) {
         // создание
         DetailFragment fragment = new DetailFragment();
         // Передача параметра
         Bundle args = new Bundle();
-        args.putInt(ARG_INDEX, index);
+        args.putParcelable(ARG_NOTE, note);
         fragment.setArguments(args);
         return fragment;
     }
@@ -37,7 +38,7 @@ public class DetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            index = getArguments().getInt(ARG_INDEX);
+            note = getArguments().getParcelable(ARG_NOTE);
         }
     }
 
@@ -50,18 +51,35 @@ public class DetailFragment extends Fragment {
 
         // Находим в контейнере элемент заголовка
         MaterialTextView title = view.findViewById(R.id.title);
-        // Получаем из ресурсов массив заголовков
-        String[] titles = getResources().getStringArray(R.array.titles);
-        // Выбрать по индексу подходящий
-        title.setText(titles[index]);
+        title.setText(note.getTitle());
 
         // Находим в контейнере элемент содержимого
         MaterialTextView content = view.findViewById(R.id.content);
-        // Получаем из ресурсов массив содержимого
-        String[] contents = getResources().getStringArray(R.array.contents);
-        // Выбрать по индексу подходящий
-        content.setText(contents[index]);
+        content.setText(note.getContent());
 
+        Calendar calendar;
+
+        // Находим в контейнере элемент memoDate
+        MaterialTextView memoDate = view.findViewById(R.id.memoDate);
+        calendar = note.getMemoDate();
+        if (calendar != null) {
+            memoDate.setText(new StringBuilder()
+                    // Месяц отсчитывается с 0, поэтому добавляем 1
+                    .append(calendar.get(Calendar.DAY_OF_MONTH)).append(".")
+                    .append(calendar.get(Calendar.MONTH) + 1).append(".")
+                    .append(calendar.get(Calendar.YEAR)));
+        }
+
+        // Находим в контейнере элемент createDate
+        MaterialTextView createDate = view.findViewById(R.id.createDate);
+        calendar = note.getCreateDate();
+        if (calendar != null) {
+            createDate.setText(new StringBuilder()
+                    // Месяц отсчитывается с 0, поэтому добавляем 1
+                    .append(calendar.get(Calendar.DAY_OF_MONTH)).append(".")
+                    .append(calendar.get(Calendar.MONTH) + 1).append(".")
+                    .append(calendar.get(Calendar.YEAR)));
+        }
         return view;
     }
 }
