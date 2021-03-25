@@ -4,4 +4,6 @@
     <dimen name="textviewMarginHorizontal">15dp</dimen>
     <dimen name="textviewMarginVertical">8dp</dimen>
     <dimen name="contentTextViewHeight">300dp</dimen>
+    <dimen name="nav_header_height">200dp</dimen>
+    <dimen name="nav_header_text_size">42sp</dimen>
 </resources>
