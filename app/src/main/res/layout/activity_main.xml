@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- 2. Создайте фрагмент для вывода этих данных. -->
 <!-- 3. Встройте этот фрагмент в активити. У вас должен получиться экран с заметками, который мы будем улучшать с каждым новым уроком. -->
+<!-- 1. ... Используйте подход Single Activity для отображения экранов. -->
 
 <!-- это макет для портретной ориентации -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -10,11 +11,9 @@
     tools:context=".MainActivity">
 
     <!-- в портретной ориентации у activity только один фрагмент -->
-    <!-- Фрагмент со списком заметок -->
-    <!-- если указано имя класса фрагмента android:name, фрагмент будет создаваться автоматически -->
-    <fragment
-        android:id="@+id/master"
-        android:name="ru.geekbrains.androidOne.lesson6.MasterFragment"
+    <FrameLayout
+        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+
 </FrameLayout>
