@@ -27,11 +27,11 @@ public class NotesModel implements Parcelable {
         this.title = in.readString();
         this.content = in.readString();
         // значение memoDate собираем из миллисекунд и таймзоны
-        this.memoDate = new GregorianCalendar(TimeZone.getTimeZone(in.readString()));
-        this.memoDate.setTimeInMillis(in.readLong());
-        // значение createDate собираем из миллисекунд и таймзоны
-        this.createDate = new GregorianCalendar(TimeZone.getTimeZone(in.readString()));
-        this.createDate.setTimeInMillis(in.readLong());
+//        this.memoDate = new GregorianCalendar(TimeZone.getTimeZone(in.readString()));
+//        this.memoDate.setTimeInMillis(in.readLong());
+//        // значение createDate собираем из миллисекунд и таймзоны
+//        this.createDate = new GregorianCalendar(TimeZone.getTimeZone(in.readString()));
+//        this.createDate.setTimeInMillis(in.readLong());
     }
 
     @Override
@@ -39,11 +39,11 @@ public class NotesModel implements Parcelable {
         dest.writeString(title);
         dest.writeString(content);
         // значение memoDate сохраняем по частям - миллисекунды и таймзону отдельно
-        dest.writeString(memoDate.getTimeZone().getID());
-        dest.writeLong(memoDate.getTimeInMillis());
-        // значение createDate сохраняем по частям - миллисекунды и таймзону отдельно
-        dest.writeString(createDate.getTimeZone().getID());
-        dest.writeLong(createDate.getTimeInMillis());
+//        dest.writeString(memoDate.getTimeZone().getID());
+//        dest.writeLong(memoDate.getTimeInMillis());
+//        // значение createDate сохраняем по частям - миллисекунды и таймзону отдельно
+//        dest.writeString(createDate.getTimeZone().getID());
+//        dest.writeLong(createDate.getTimeInMillis());
     }
 
     @Override

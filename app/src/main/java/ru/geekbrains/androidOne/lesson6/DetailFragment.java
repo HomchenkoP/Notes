@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.material.textview.MaterialTextView;
 
@@ -49,36 +50,41 @@ public class DetailFragment extends Fragment {
         // Получаем головной элемент из макета
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
 
-        // Находим в контейнере элемент заголовка
-        MaterialTextView title = view.findViewById(R.id.title);
-        title.setText(note.getTitle());
+        if (note != null) {
 
-        // Находим в контейнере элемент содержимого
-        MaterialTextView content = view.findViewById(R.id.content);
-        content.setText(note.getContent());
+            // Находим в контейнере элемент заголовка
+            MaterialTextView title = view.findViewById(R.id.title);
+            title.setText(note.getTitle());
 
-        Calendar calendar;
+            // Находим в контейнере элемент содержимого
+            MaterialTextView content = view.findViewById(R.id.content);
+            content.setText(note.getContent());
 
-        // Находим в контейнере элемент memoDate
-        MaterialTextView memoDate = view.findViewById(R.id.memoDate);
-        calendar = note.getMemoDate();
-        if (calendar != null) {
-            memoDate.setText(new StringBuilder()
-                    // Месяц отсчитывается с 0, поэтому добавляем 1
-                    .append(calendar.get(Calendar.DAY_OF_MONTH)).append(".")
-                    .append(calendar.get(Calendar.MONTH) + 1).append(".")
-                    .append(calendar.get(Calendar.YEAR)));
-        }
+            Calendar calendar;
 
-        // Находим в контейнере элемент createDate
-        MaterialTextView createDate = view.findViewById(R.id.createDate);
-        calendar = note.getCreateDate();
-        if (calendar != null) {
-            createDate.setText(new StringBuilder()
-                    // Месяц отсчитывается с 0, поэтому добавляем 1
-                    .append(calendar.get(Calendar.DAY_OF_MONTH)).append(".")
-                    .append(calendar.get(Calendar.MONTH) + 1).append(".")
-                    .append(calendar.get(Calendar.YEAR)));
+            calendar = note.getMemoDate();
+            if (calendar != null) {
+                // Находим в контейнере элемент memoDate
+                MaterialTextView memoDate = view.findViewById(R.id.memoDate);
+                memoDate.setText(new StringBuilder()
+                        // Месяц отсчитывается с 0, поэтому добавляем 1
+                        .append(calendar.get(Calendar.DAY_OF_MONTH)).append(".")
+                        .append(calendar.get(Calendar.MONTH) + 1).append(".")
+                        .append(calendar.get(Calendar.YEAR)));
+            }
+
+            calendar = note.getCreateDate();
+            if (calendar != null) {
+                // Находим в контейнере элемент createDate
+                MaterialTextView createDate = view.findViewById(R.id.createDate);
+                createDate.setText(new StringBuilder()
+                        // Месяц отсчитывается с 0, поэтому добавляем 1
+                        .append(calendar.get(Calendar.DAY_OF_MONTH)).append(".")
+                        .append(calendar.get(Calendar.MONTH) + 1).append(".")
+                        .append(calendar.get(Calendar.YEAR)));
+            }
+        } else {
+            Toast.makeText(getActivity(), "Вызов onCreateView с note == null.", Toast.LENGTH_SHORT).show();
         }
         return view;
     }
