@@ -3,7 +3,7 @@
         если нажать на элемент списка в портретной ориентации — открывается новое окно,
         если нажать в ландшафтной — окно открывается рядом. -->
 
-<!-- это макет для альбомной ориентации -->
+<!-- это макет для ландшафтной ориентации -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"

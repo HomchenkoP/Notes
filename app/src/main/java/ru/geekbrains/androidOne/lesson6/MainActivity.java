@@ -20,15 +20,15 @@ import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity {
 
+    // навигационное меню
+    private DrawerLayout drawer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            // в ландшафтной ориентации
-            return;
-        } else {
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             // в портретной ориентации
             if (savedInstanceState == null) {
                 // Если эта activity запускается первый раз
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
     // регистрация drawer
     private void initDrawer(Toolbar toolbar) {
-        final DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar,
                 R.string.navigation_drawer_open,
@@ -64,11 +64,14 @@ public class MainActivity extends AppCompatActivity {
 
         // Обработка навигационного меню
         NavigationView navigationView = findViewById(R.id.nav_view);
+        // обработчик
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                Toast.makeText(MainActivity.this, "onNavigationItemSelected", Toast.LENGTH_SHORT).show();
                 int id = item.getItemId();
                 if (navigateFragment(id)){
+                    // закрываем шторку
                     drawer.closeDrawer(GravityCompat.START);
                     return true;
                 }
@@ -77,19 +80,16 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Обработка выбора пункта меню приложения (активити)
-        int id = item.getItemId();
-
-        if (navigateFragment(id)) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     private boolean navigateFragment(int id) {
         switch (id) {
+            case R.id.action_notes:
+                //addFragment(new NotesFragment());
+                Toast.makeText(MainActivity.this, "TODO Открыть окно заметок", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.action_about:
+                //addFragment(new AboutFragment());
+                Toast.makeText(MainActivity.this, "TODO Открыть окно о приложении", Toast.LENGTH_SHORT).show();
+                return true;
             case R.id.action_settings:
                 //addFragment(new SettingsFragment());
                 Toast.makeText(MainActivity.this, "TODO Открыть окно настроек", Toast.LENGTH_SHORT).show();
@@ -98,19 +98,33 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
+    // обрабатываем нажатие системной кнопки "Назад"
+    @Override
+    public void onBackPressed() {
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            // если открыта шторка drawer, закрываем шторку
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    // Toolbar меню
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Здесь определяем меню приложения (активити)
-        getMenuInflater().inflate(R.menu.main, menu);
-        MenuItem search = menu.findItem(R.id.action_search); // поиск пункта меню поиска
-        SearchView searchText = (SearchView) search.getActionView(); // строка поиска
+        getMenuInflater().inflate(R.menu.activity_main_toolbar_menu, menu);
+        MenuItem search = menu.findItem(R.id.action_search);
+        // окно поиска
+        SearchView searchView = (SearchView) search.getActionView();
         // обработчик
-        searchText.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             // реагирует на конец ввода поиска
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Toast.makeText(MainActivity.this, query, Toast.LENGTH_SHORT).show();
-                return true;
+                Toast.makeText(MainActivity.this, "TODO Открыть окно заметок, содержащих '" + query + "'", Toast.LENGTH_SHORT).show();
+                return false; // скрыть экранную клавиатуру
             }
 
             // реагирует на нажатие каждой клавиши
@@ -121,5 +135,15 @@ public class MainActivity extends AppCompatActivity {
         });
 
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Обработка выбора пункта меню приложения (активити)
+        int id = item.getItemId();
+        if (navigateFragment(id)) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

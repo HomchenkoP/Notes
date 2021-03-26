@@ -1,9 +1,11 @@
 <resources>
     <string name="app_name">Notes</string>
     <string name="search">Поиск</string>
-    <string name="settings">Настройки</string>
+    <string name="notes">Заметки</string>
     <string name="about">О приложении</string>
-    <string name="navigation">Навигация</string>
+    <string name="settings">Настройки</string>
+    <string name="drawerHeaderTitle">Notes</string>
     <string name="navigation_drawer_open">Открыть меню навигации</string>
     <string name="navigation_drawer_close">Закрыть меню навигации</string>
+
 </resources>
