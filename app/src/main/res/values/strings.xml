@@ -7,5 +7,6 @@
     <string name="drawerHeaderTitle">Notes</string>
     <string name="navigation_drawer_open">Открыть меню навигации</string>
     <string name="navigation_drawer_close">Закрыть меню навигации</string>
+    <string name="forward">Переслать</string>
 
 </resources>

@@ -2,9 +2,14 @@ package ru.geekbrains.androidOne.lesson6;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -41,6 +46,10 @@ public class DetailFragment extends Fragment {
         if (getArguments() != null) {
             note = getArguments().getParcelable(ARG_NOTE);
         }
+        // Для создания меню во фрагменте
+        setHasOptionsMenu(true);
+        // Меняем заголовок
+        getActivity().setTitle(R.string.notes);
     }
 
     // При создании фрагмента укажем его макет
@@ -87,5 +96,28 @@ public class DetailFragment extends Fragment {
             Toast.makeText(getActivity(), "Вызов onCreateView с note == null.", Toast.LENGTH_SHORT).show();
         }
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_detail_menu, menu);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        // Скрываем меню поиска
+        menu.findItem(R.id.action_search).setVisible(false);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        // Обрабатываем выбор меню "Переслать"
+        if (item.getItemId() == R.id.action_forward){
+            Toast.makeText(getContext(), "TODO Открыть окно пересылки заметки", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
