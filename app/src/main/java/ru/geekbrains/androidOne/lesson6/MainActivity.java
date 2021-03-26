@@ -8,6 +8,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.app.Activity;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Menu;
@@ -19,9 +20,6 @@ import com.google.android.material.navigation.NavigationView;
 // 1. ... Используйте подход Single Activity для отображения экранов.
 
 public class MainActivity extends AppCompatActivity {
-
-    // навигационное меню
-    private DrawerLayout drawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +52,8 @@ public class MainActivity extends AppCompatActivity {
 
     // регистрация drawer
     private void initDrawer(Toolbar toolbar) {
-        drawer = findViewById(R.id.drawer_layout);
+        // навигационное меню
+        final DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar,
                 R.string.navigation_drawer_open,
@@ -68,9 +67,7 @@ public class MainActivity extends AppCompatActivity {
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                Toast.makeText(MainActivity.this, "onNavigationItemSelected", Toast.LENGTH_SHORT).show();
-                int id = item.getItemId();
-                if (navigateFragment(id)){
+                if (navigateFragment(item.getItemId())){
                     // закрываем шторку
                     drawer.closeDrawer(GravityCompat.START);
                     return true;
@@ -101,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
     // обрабатываем нажатие системной кнопки "Назад"
     @Override
     public void onBackPressed() {
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             // если открыта шторка drawer, закрываем шторку
             drawer.closeDrawer(GravityCompat.START);
@@ -113,10 +111,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
         // Здесь определяем меню приложения (активити)
         getMenuInflater().inflate(R.menu.activity_main_toolbar_menu, menu);
-        MenuItem search = menu.findItem(R.id.action_search);
         // окно поиска
+        MenuItem search = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) search.getActionView();
         // обработчик
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -140,8 +139,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Обработка выбора пункта меню приложения (активити)
-        int id = item.getItemId();
-        if (navigateFragment(id)) {
+        if (navigateFragment(item.getItemId())) {
             return true;
         }
         return super.onOptionsItemSelected(item);

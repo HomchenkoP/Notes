@@ -1,5 +1,6 @@
 package ru.geekbrains.androidOne.lesson6;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -107,8 +108,10 @@ public class DetailFragment extends Fragment {
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        // Скрываем меню поиска
-        menu.findItem(R.id.action_search).setVisible(false);
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            // В портретной ориентации скрываем меню поиска
+            menu.findItem(R.id.action_search).setVisible(false);
+        }
     }
 
     @Override
