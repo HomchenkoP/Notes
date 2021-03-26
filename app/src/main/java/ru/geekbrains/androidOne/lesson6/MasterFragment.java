@@ -40,6 +40,7 @@ public class MasterFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initList(view);
+        initFloatingActionButton(view);
     }
 
     // создаём список заголовков заметок на экране из массива в ресурсах
@@ -99,6 +100,15 @@ public class MasterFragment extends Fragment {
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         fragmentTransaction.addToBackStack(null); // отправить в стек обратного вызова
         fragmentTransaction.commit();
+    }
+
+    private void initFloatingActionButton(View view) {
+        view.findViewById(R.id.floating_action_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getContext(), "TODO Открыть окно добавления новой заметки", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     // activity создана, можно к ней обращаться. Выполним начальные действия
