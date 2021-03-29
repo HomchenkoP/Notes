@@ -1,7 +1,5 @@
 package ru.geekbrains.androidOne.lesson6;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
@@ -10,14 +8,18 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.google.android.material.textview.MaterialTextView;
+import ru.geekbrains.androidOne.lesson8.CardsSource;
+import ru.geekbrains.androidOne.lesson8.CardsSourceImpl;
+import ru.geekbrains.androidOne.lesson8.NotesAdapter;
 
 // 2. Создайте фрагмент для вывода этих данных.
 // 1. ... Используйте подход Single Activity для отображения экранов.
@@ -28,44 +30,56 @@ public class MasterFragment extends Fragment {
     private NotesModel currentNote; // Текущая позиция (выбранная заметка)
     private boolean isLandscape;
 
+    NotesAdapter adapter;
+
+    // Фабричный метод создания фрагмента
+    // Фрагменты рекомендуется создавать через фабричные методы.
+    public static MasterFragment newInstance() {
+        return new MasterFragment();
+    }
+
     // При создании фрагмента укажем его макет
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_master, container, false);
+        // Получаем головной элемент из макета
+        View view = inflater.inflate(R.layout.fragment_master, container, false);
+        // Находим в контейнере элемент RecyclerView
+        RecyclerView recyclerView = view.findViewById(R.id.recycler_view_lines);
+        // Получим источник данных для списка
+        CardsSource data = new CardsSourceImpl(getResources()).init();
+        initRecyclerView(recyclerView, data);
+        return view;
+    }
+
+    private void initRecyclerView(RecyclerView recyclerView, CardsSource data){
+        // Эта установка служит для повышения производительности системы
+        recyclerView.setHasFixedSize(true);
+        // Будем работать со встроенным менеджером
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
+        // Установим адаптер
+        adapter = new NotesAdapter(data);
+        recyclerView.setAdapter(adapter);
+        // Добавим разделитель карточек
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(getContext(),  LinearLayoutManager.VERTICAL);
+        itemDecoration.setDrawable(getResources().getDrawable(R.drawable.separator, null));
+        recyclerView.addItemDecoration(itemDecoration);
+
+        // Установим слушателя
+        adapter.SetOnItemClickListener(new NotesAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Toast.makeText(getContext(), String.format("Позиция - %d", position), Toast.LENGTH_SHORT).show();
+                showNote(adapter.getDataSource().getCardData(position));
+            }
+        });
     }
 
     // вызывается после создания макета фрагмента, здесь мы проинициализируем список
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        initList(view);
         initFloatingActionButton(view);
-    }
-
-    // создаём список заголовков заметок на экране из массива в ресурсах
-    private void initList(View view) {
-        LinearLayout layoutView = view.findViewById(R.id.master_container);
-        String[] titles = getResources().getStringArray(R.array.titles);
-
-        // В цикле создаём элемент TextView, заполняем его значениями, и добавляем на экран.
-        for(int i = 0; i < titles.length; i++) {
-            MaterialTextView title = new MaterialTextView(getContext());
-            title.setText(titles[i]);
-            title.setTextSize(30);
-            layoutView.addView(title);
-            // добавляем обработчик касания
-            final int fi = i;
-            title.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    currentNote = new NotesModel(getResources().getStringArray(R.array.titles)[fi],
-                            getResources().getStringArray(R.array.contents)[fi],
-                            null, null);
-                    showNote(currentNote);
-                }
-            });
-        }
     }
 
     private void showNote(NotesModel currentNote) {
