@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.google.android.material.textview.MaterialTextView;
 
 // 2. Создайте фрагмент для вывода этих данных.
+// 1. ... Используйте подход Single Activity для отображения экранов.
 
 public class MasterFragment extends Fragment {
 
@@ -39,6 +40,7 @@ public class MasterFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initList(view);
+        initFloatingActionButton(view);
     }
 
     // создаём список заголовков заметок на экране из массива в ресурсах
@@ -58,8 +60,8 @@ public class MasterFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     currentNote = new NotesModel(getResources().getStringArray(R.array.titles)[fi],
-                                                 getResources().getStringArray(R.array.contents)[fi],
-                                                 null, null);
+                            getResources().getStringArray(R.array.contents)[fi],
+                            null, null);
                     showNote(currentNote);
                 }
             });
@@ -83,18 +85,30 @@ public class MasterFragment extends Fragment {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.detail, detailFragment);  // замена фрагмента
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+        fragmentTransaction.addToBackStack(null); // отправить в стек обратного вызова
         fragmentTransaction.commit();
     }
 
     // Показать заметку в портретной ориентации.
     private void showNotePort(NotesModel currentNote) {
-        // Откроем вторую activity
-        Intent intent = new Intent();
-        intent.setClass(getActivity(), DetailActivity.class);
-        // и передадим туда параметры
-        intent.putExtra(DetailFragment.ARG_NOTE, currentNote);
-        Toast.makeText(getActivity(), "Вызов startActivity(intent) приводит к ошибке.", Toast.LENGTH_SHORT).show();
-        //startActivity(intent);
+        // Создаём новый фрагмент с текущей позицией
+        DetailFragment detailFragment = DetailFragment.newInstance(currentNote);
+        // Выполняем транзакцию по замене фрагмента
+        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, detailFragment);  // замена фрагмента
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+        fragmentTransaction.addToBackStack(null); // отправить в стек обратного вызова
+        fragmentTransaction.commit();
+    }
+
+    private void initFloatingActionButton(View view) {
+        view.findViewById(R.id.floating_action_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getContext(), "TODO Открыть окно добавления новой заметки", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     // activity создана, можно к ней обращаться. Выполним начальные действия
@@ -109,8 +123,8 @@ public class MasterFragment extends Fragment {
         } else {
             // Если восстановить не удалось, то сделаем объект с первым индексом
             currentNote = new NotesModel(getResources().getStringArray(R.array.titles)[0],
-                                         getResources().getStringArray(R.array.contents)[0],
-                                         null, null);
+                    getResources().getStringArray(R.array.contents)[0],
+                    null, null);
         }
 
         // Определение ориентации

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/action_notes"
+            android:icon="@drawable/ic_baseline_notes_24"
+            android:orderInCategory="10"
+            android:title="@string/notes"
+            android:checked="true"/>
+        <item
+            android:id="@+id/action_about"
+            android:icon="@drawable/ic_baseline_info_24"
+            android:orderInCategory="20"
+            android:title="@string/about" />
+        <item
+            android:id="@+id/action_settings"
+            android:icon="@drawable/ic_baseline_settings_24"
+            android:orderInCategory="100"
+            android:title="@string/settings" />
+    </group>
+</menu>

@@ -1,12 +1,19 @@
 package ru.geekbrains.androidOne.lesson6;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.material.textview.MaterialTextView;
 
@@ -40,6 +47,10 @@ public class DetailFragment extends Fragment {
         if (getArguments() != null) {
             note = getArguments().getParcelable(ARG_NOTE);
         }
+        // Для создания меню во фрагменте
+        setHasOptionsMenu(true);
+        // Меняем заголовок
+        getActivity().setTitle(R.string.notes);
     }
 
     // При создании фрагмента укажем его макет
@@ -49,37 +60,67 @@ public class DetailFragment extends Fragment {
         // Получаем головной элемент из макета
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
 
-        // Находим в контейнере элемент заголовка
-        MaterialTextView title = view.findViewById(R.id.title);
-        title.setText(note.getTitle());
+        if (note != null) {
 
-        // Находим в контейнере элемент содержимого
-        MaterialTextView content = view.findViewById(R.id.content);
-        content.setText(note.getContent());
+            // Находим в контейнере элемент заголовка
+            MaterialTextView title = view.findViewById(R.id.title);
+            title.setText(note.getTitle());
 
-        Calendar calendar;
+            // Находим в контейнере элемент содержимого
+            MaterialTextView content = view.findViewById(R.id.content);
+            content.setText(note.getContent());
 
-        // Находим в контейнере элемент memoDate
-        MaterialTextView memoDate = view.findViewById(R.id.memoDate);
-        calendar = note.getMemoDate();
-        if (calendar != null) {
-            memoDate.setText(new StringBuilder()
-                    // Месяц отсчитывается с 0, поэтому добавляем 1
-                    .append(calendar.get(Calendar.DAY_OF_MONTH)).append(".")
-                    .append(calendar.get(Calendar.MONTH) + 1).append(".")
-                    .append(calendar.get(Calendar.YEAR)));
-        }
+            Calendar calendar;
 
-        // Находим в контейнере элемент createDate
-        MaterialTextView createDate = view.findViewById(R.id.createDate);
-        calendar = note.getCreateDate();
-        if (calendar != null) {
-            createDate.setText(new StringBuilder()
-                    // Месяц отсчитывается с 0, поэтому добавляем 1
-                    .append(calendar.get(Calendar.DAY_OF_MONTH)).append(".")
-                    .append(calendar.get(Calendar.MONTH) + 1).append(".")
-                    .append(calendar.get(Calendar.YEAR)));
+            calendar = note.getMemoDate();
+            if (calendar != null) {
+                // Находим в контейнере элемент memoDate
+                MaterialTextView memoDate = view.findViewById(R.id.memoDate);
+                memoDate.setText(new StringBuilder()
+                        // Месяц отсчитывается с 0, поэтому добавляем 1
+                        .append(calendar.get(Calendar.DAY_OF_MONTH)).append(".")
+                        .append(calendar.get(Calendar.MONTH) + 1).append(".")
+                        .append(calendar.get(Calendar.YEAR)));
+            }
+
+            calendar = note.getCreateDate();
+            if (calendar != null) {
+                // Находим в контейнере элемент createDate
+                MaterialTextView createDate = view.findViewById(R.id.createDate);
+                createDate.setText(new StringBuilder()
+                        // Месяц отсчитывается с 0, поэтому добавляем 1
+                        .append(calendar.get(Calendar.DAY_OF_MONTH)).append(".")
+                        .append(calendar.get(Calendar.MONTH) + 1).append(".")
+                        .append(calendar.get(Calendar.YEAR)));
+            }
+        } else {
+            Toast.makeText(getActivity(), "Вызов onCreateView с note == null.", Toast.LENGTH_SHORT).show();
         }
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_detail_menu, menu);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            // В портретной ориентации скрываем меню поиска
+            menu.findItem(R.id.action_search).setVisible(false);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        // Обрабатываем выбор меню "Переслать"
+        if (item.getItemId() == R.id.action_forward){
+            Toast.makeText(getContext(), "TODO Открыть окно пересылки заметки", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
