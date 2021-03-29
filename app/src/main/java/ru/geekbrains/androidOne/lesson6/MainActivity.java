@@ -7,6 +7,9 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.app.Activity;
 import android.content.res.Configuration;
@@ -30,18 +33,23 @@ public class MainActivity extends AppCompatActivity {
             // в портретной ориентации
             if (savedInstanceState == null) {
                 // Если эта activity запускается первый раз
-                MasterFragment masterFragment = new MasterFragment();
                 // Добавим фрагмент на activity
-                // Чтобы программно вставить фрагмент, надо получить «Менеджер фрагментов», затем открыть транзакцию, вставить макет и закрыть транзакцию.
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .add(R.id.fragment_container, masterFragment)
-                        //.addToBackStack(null)
-                        .commit();
+                addFragment(new MasterFragment());
             }
         }
         Toolbar toolbar = initToolbar();
         initDrawer(toolbar);
+    }
+
+    private void addFragment(Fragment fragment) {
+        //Получить менеджер фрагментов
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        // Открыть транзакцию
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, fragment);
+        fragmentTransaction.addToBackStack(null);
+        // Закрыть транзакцию
+        fragmentTransaction.commit();
     }
 
     private Toolbar initToolbar() {
