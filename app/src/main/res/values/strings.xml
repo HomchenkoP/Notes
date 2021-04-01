@@ -10,5 +10,8 @@
     <string name="forward">Переслать</string>
     <string name="update">Изменить</string>
     <string name="delete">Удалить</string>
+    <string name="cardData">Заметка</string>
+    <string name="title">Заголовок</string>
+    <string name="content">Заметка</string>
 
 </resources>
