@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -38,6 +39,7 @@ public class MasterFragment extends Fragment {
     private NotesModel currentNote; // Текущая позиция (выбранная заметка)
     private boolean isLandscape;
 
+    private static final int MY_DEFAULT_DURATION = 1000;
     private CardsSource data;
     private NotesAdapter adapter;
     private RecyclerView recyclerView;
@@ -92,6 +94,11 @@ public class MasterFragment extends Fragment {
         DividerItemDecoration itemDecoration = new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL);
         itemDecoration.setDrawable(getResources().getDrawable(R.drawable.separator, null));
         recyclerView.addItemDecoration(itemDecoration);
+        // Установим анимацию. А чтобы было хорошо заметно, сделаем анимацию долгой
+        DefaultItemAnimator animator = new DefaultItemAnimator();
+        animator.setAddDuration(MY_DEFAULT_DURATION);
+        animator.setRemoveDuration(MY_DEFAULT_DURATION);
+        recyclerView.setItemAnimator(animator);
 
         if (moveToLastPosition){
             recyclerView.smoothScrollToPosition(data.size() - 1);
@@ -206,6 +213,7 @@ public class MasterFragment extends Fragment {
                     public void updateCardData(NotesModel cardData) {
                         data.addCardData(cardData);
                         adapter.notifyItemInserted(data.size() - 1);
+                        recyclerView.smoothScrollToPosition(data.size() - 1);
                         // это сигнал, чтобы вызванный метод onCreateView
                         // перепрыгнул на конец списка
                         moveToLastPosition = true;
