@@ -1,5 +1,6 @@
 package ru.geekbrains.androidOne.lesson6;
 
+import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
@@ -23,6 +24,10 @@ import android.widget.Toast;
 import ru.geekbrains.androidOne.lesson8.CardsSource;
 import ru.geekbrains.androidOne.lesson8.CardsSourceImpl;
 import ru.geekbrains.androidOne.lesson8.NotesAdapter;
+import ru.geekbrains.androidOne.lesson9.CardFragment;
+import ru.geekbrains.androidOne.lesson9.Navigation;
+import ru.geekbrains.androidOne.lesson9.Observer;
+import ru.geekbrains.androidOne.lesson9.Publisher;
 
 // 2. Создайте фрагмент для вывода этих данных.
 // 1. ... Используйте подход Single Activity для отображения экранов.
@@ -36,11 +41,26 @@ public class MasterFragment extends Fragment {
     private CardsSource data;
     private NotesAdapter adapter;
     private RecyclerView recyclerView;
+    private Navigation navigation;
+    private Publisher publisher;
+    // признак, что при повторном открытии фрагмента
+    // (возврате из фрагмента, добавляющего запись)
+    // надо прыгнуть на последнюю запись
+    private boolean moveToLastPosition;
 
     // Фабричный метод создания фрагмента
     // Фрагменты рекомендуется создавать через фабричные методы.
     public static MasterFragment newInstance() {
         return new MasterFragment();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // Получим источник данных для списка
+        // Поскольку onCreateView запускается каждый раз
+        // при возврате в фрагмент, данные надо создавать один раз
+        data = new CardsSourceImpl(getResources()).init();
     }
 
     // При создании фрагмента укажем его макет
@@ -56,7 +76,6 @@ public class MasterFragment extends Fragment {
         // Находим в контейнере элемент RecyclerView
         recyclerView = view.findViewById(R.id.recycler_view_lines);
         // Получим источник данных для списка
-        data = new CardsSourceImpl(getResources()).init();
         initRecyclerView();
     }
 
@@ -73,6 +92,11 @@ public class MasterFragment extends Fragment {
         DividerItemDecoration itemDecoration = new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL);
         itemDecoration.setDrawable(getResources().getDrawable(R.drawable.separator, null));
         recyclerView.addItemDecoration(itemDecoration);
+
+        if (moveToLastPosition){
+            recyclerView.smoothScrollToPosition(data.size() - 1);
+            moveToLastPosition = false;
+        }
 
         // Установим слушателя
         adapter.SetOnItemClickListener(new NotesAdapter.OnItemClickListener() {
@@ -126,6 +150,21 @@ public class MasterFragment extends Fragment {
     }
 
     @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        MainActivity activity = (MainActivity)context;
+        navigation = activity.getNavigation();
+        publisher = activity.getPublisher();
+    }
+
+    @Override
+    public void onDetach() {
+        navigation = null;
+        publisher = null;
+        super.onDetach();
+    }
+
+    @Override
     public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         MenuInflater inflater = requireActivity().getMenuInflater();
@@ -138,11 +177,14 @@ public class MasterFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.action_update:
                 Toast.makeText(getContext(), "TODO Открыть окно изменения заметки", Toast.LENGTH_SHORT).show();
-                data.updateCardData(position, new NotesModel(data.getCardData(position).getTitle(),
-                        data.getCardData(position).getContent(),
-                        null,
-                        null));
-                adapter.notifyItemChanged(position);
+                navigation.addFragment(CardFragment.newInstance(data.getCardData(position)), true);
+                publisher.subscribe(new Observer() {
+                    @Override
+                    public void updateCardData(NotesModel cardData) {
+                        data.updateCardData(position, cardData);
+                        adapter.notifyItemChanged(position);
+                    }
+                });
                 return true;
             case R.id.action_delete:
                 Toast.makeText(getContext(), "TODO Удалить заметку", Toast.LENGTH_SHORT).show();
@@ -158,12 +200,17 @@ public class MasterFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Toast.makeText(getContext(), "TODO Открыть окно добавления новой заметки", Toast.LENGTH_SHORT).show();
-                data.addCardData(new NotesModel("Заголовок " + (data.size() + 1),
-                        "Описание " + (data.size() + 1),
-                        null,
-                        null));
-                adapter.notifyItemInserted(data.size() - 1);
-                recyclerView.scrollToPosition(data.size() - 1);
+                navigation.addFragment(CardFragment.newInstance(), true);
+                publisher.subscribe(new Observer() {
+                    @Override
+                    public void updateCardData(NotesModel cardData) {
+                        data.addCardData(cardData);
+                        adapter.notifyItemInserted(data.size() - 1);
+                        // это сигнал, чтобы вызванный метод onCreateView
+                        // перепрыгнул на конец списка
+                        moveToLastPosition = true;
+                    }
+                });
             }
         });
     }

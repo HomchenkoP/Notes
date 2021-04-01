@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.textview.MaterialTextView;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import ru.geekbrains.androidOne.lesson6.NotesModel;
@@ -116,26 +117,12 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
         public void setData(NotesModel note){
             title.setText(note.getTitle());
             content.setText(note.getContent());
-
-            Calendar calendar;
-
-            calendar = note.getMemoDate();
-            if (calendar != null) {
-                memoDate.setText(new StringBuilder()
-                        // Месяц отсчитывается с 0, поэтому добавляем 1
-                        .append(calendar.get(Calendar.DAY_OF_MONTH)).append(".")
-                        .append(calendar.get(Calendar.MONTH) + 1).append(".")
-                        .append(calendar.get(Calendar.YEAR)));
-            }
-
-            calendar = note.getCreateDate();
-            if (calendar != null) {
-                createDate.setText(new StringBuilder()
-                        // Месяц отсчитывается с 0, поэтому добавляем 1
-                        .append(calendar.get(Calendar.DAY_OF_MONTH)).append(".")
-                        .append(calendar.get(Calendar.MONTH) + 1).append(".")
-                        .append(calendar.get(Calendar.YEAR)));
-            }
+//            if (note.getMemoDate() != null) {
+//                memoDate.setText(new SimpleDateFormat("dd-MM-yy").format(note.getMemoDate()));
+//            }
+//            if (note.getCreateDate() != null) {
+//                createDate.setText(new SimpleDateFormat("dd-MM-yy").format(note.getCreateDate()));
+//            }
         }
     }
 
