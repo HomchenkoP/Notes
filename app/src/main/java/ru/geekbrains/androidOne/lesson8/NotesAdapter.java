@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.textview.MaterialTextView;
@@ -19,13 +20,16 @@ import ru.geekbrains.androidOne.lesson6.R;
 
 public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> {
 
-    private CardsSource dataSource;
+    private final CardsSource dataSource;
+    private final Fragment fragment;
     private OnItemClickListener itemClickListener;  // Слушатель будет устанавливаться извне
+    private int menuPosition;
 
     // Передаём в конструктор источник данных
     // В нашем случае это массив, но может быть и запрос к БД
-    public NotesAdapter(CardsSource dataSource) {
+    public NotesAdapter(CardsSource dataSource, Fragment fragment) {
         this.dataSource = dataSource;
+        this.fragment = fragment;
     }
 
     // Создать новый элемент пользовательского интерфейса
@@ -82,6 +86,9 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
             memoDate = itemView.findViewById(R.id.memoDate);
             createDate = itemView.findViewById(R.id.createDate);
 
+            // контекстное меню
+            registerContextMenu(itemView);
+
             // Обработчик нажатий на этом ViewHolder
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -91,6 +98,19 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
                     }
                 }
             });
+        }
+
+        private void registerContextMenu(@NonNull View itemView) {
+            if (fragment != null){
+                itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        menuPosition = getLayoutPosition();
+                        return false;
+                    }
+                });
+                fragment.registerForContextMenu(itemView);
+            }
         }
 
         public void setData(NotesModel note){
@@ -121,5 +141,9 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
 
     public CardsSource getDataSource() {
         return dataSource;
+    }
+
+    public int getMenuPosition() {
+        return menuPosition;
     }
 }

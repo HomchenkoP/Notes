@@ -12,7 +12,10 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -30,7 +33,9 @@ public class MasterFragment extends Fragment {
     private NotesModel currentNote; // Текущая позиция (выбранная заметка)
     private boolean isLandscape;
 
-    NotesAdapter adapter;
+    private CardsSource data;
+    private NotesAdapter adapter;
+    private RecyclerView recyclerView;
 
     // Фабричный метод создания фрагмента
     // Фрагменты рекомендуется создавать через фабричные методы.
@@ -43,25 +48,29 @@ public class MasterFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Получаем головной элемент из макета
         View view = inflater.inflate(R.layout.fragment_master, container, false);
-        // Находим в контейнере элемент RecyclerView
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_view_lines);
-        // Получим источник данных для списка
-        CardsSource data = new CardsSourceImpl(getResources()).init();
-        initRecyclerView(recyclerView, data);
+        initView(view);
         return view;
     }
 
-    private void initRecyclerView(RecyclerView recyclerView, CardsSource data){
+    private void initView(View view) {
+        // Находим в контейнере элемент RecyclerView
+        recyclerView = view.findViewById(R.id.recycler_view_lines);
+        // Получим источник данных для списка
+        data = new CardsSourceImpl(getResources()).init();
+        initRecyclerView();
+    }
+
+    private void initRecyclerView() {
         // Эта установка служит для повышения производительности системы
         recyclerView.setHasFixedSize(true);
         // Будем работать со встроенным менеджером
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         // Установим адаптер
-        adapter = new NotesAdapter(data);
+        adapter = new NotesAdapter(data, this);
         recyclerView.setAdapter(adapter);
         // Добавим разделитель карточек
-        DividerItemDecoration itemDecoration = new DividerItemDecoration(getContext(),  LinearLayoutManager.VERTICAL);
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL);
         itemDecoration.setDrawable(getResources().getDrawable(R.drawable.separator, null));
         recyclerView.addItemDecoration(itemDecoration);
 
@@ -116,11 +125,45 @@ public class MasterFragment extends Fragment {
         fragmentTransaction.commit();
     }
 
+    @Override
+    public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = requireActivity().getMenuInflater();
+        inflater.inflate(R.menu.card_menu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        int position = adapter.getMenuPosition();
+        switch (item.getItemId()) {
+            case R.id.action_update:
+                Toast.makeText(getContext(), "TODO Открыть окно изменения заметки", Toast.LENGTH_SHORT).show();
+                data.updateCardData(position, new NotesModel(data.getCardData(position).getTitle(),
+                        data.getCardData(position).getContent(),
+                        null,
+                        null));
+                adapter.notifyItemChanged(position);
+                return true;
+            case R.id.action_delete:
+                Toast.makeText(getContext(), "TODO Удалить заметку", Toast.LENGTH_SHORT).show();
+                data.deleteCardData(position);
+                adapter.notifyItemRemoved(position);
+                return true;
+        }
+        return super.onContextItemSelected(item);
+    }
+
     private void initFloatingActionButton(View view) {
         view.findViewById(R.id.floating_action_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast.makeText(getContext(), "TODO Открыть окно добавления новой заметки", Toast.LENGTH_SHORT).show();
+                data.addCardData(new NotesModel("Заголовок " + (data.size() + 1),
+                        "Описание " + (data.size() + 1),
+                        null,
+                        null));
+                adapter.notifyItemInserted(data.size() - 1);
+                recyclerView.scrollToPosition(data.size() - 1);
             }
         });
     }
