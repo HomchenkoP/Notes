@@ -9,10 +9,11 @@ import java.util.Date;
 
 public class NotesModel implements Parcelable {
 
-    private String title;
-    private String content;
-    private Date memoDate;
-    private Date createDate;
+    private String id;       // идентификатор
+    private String title;    // заголовок заметки
+    private String content;  // содержимое заметки
+    private Date memoDate;   // дата напоминания
+    private Date createDate; // дата создания/изменения заметки
 
     public NotesModel(String title, String content, Date memoDate, Date createDate) {
         this.title = title;
@@ -52,6 +53,14 @@ public class NotesModel implements Parcelable {
             return new NotesModel[size];
         }
     };
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
 
     public String getTitle() {
         return title;

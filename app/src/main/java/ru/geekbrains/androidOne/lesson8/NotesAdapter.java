@@ -21,16 +21,18 @@ import ru.geekbrains.androidOne.lesson6.R;
 
 public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> {
 
-    private final CardsSource dataSource;
+    private CardsSource dataSource;
     private final Fragment fragment;
     private OnItemClickListener itemClickListener;  // Слушатель будет устанавливаться извне
     private int menuPosition;
 
-    // Передаём в конструктор источник данных
-    // В нашем случае это массив, но может быть и запрос к БД
-    public NotesAdapter(CardsSource dataSource, Fragment fragment) {
-        this.dataSource = dataSource;
+    public NotesAdapter(Fragment fragment) {
         this.fragment = fragment;
+    }
+
+    public void setDataSource(CardsSource dataSource) {
+        this.dataSource = dataSource;
+        notifyDataSetChanged();
     }
 
     // Создать новый элемент пользовательского интерфейса

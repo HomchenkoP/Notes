@@ -105,7 +105,15 @@ public class CardFragment extends Fragment {
         String title = this.title.getText().toString();
         String content = this.content.getText().toString();
         Date MemoDate = getDateFromDatePicker();
-        return new NotesModel(title, content, MemoDate, Calendar.getInstance().getTime());
+        if (cardData != null){
+            NotesModel answer;
+            answer = new NotesModel(title, content, MemoDate, Calendar.getInstance().getTime());
+            answer.setId(cardData.getId());
+            return answer;
+        } else {
+            return new NotesModel(title, content, null, null);
+        }
+
     }
 
     // Получение даты из DatePicker

@@ -22,6 +22,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import ru.geekbrains.androidOne.lesson10.CardsSourceFirebaseImpl;
+import ru.geekbrains.androidOne.lesson10.CardsSourceResponse;
 import ru.geekbrains.androidOne.lesson8.CardsSource;
 import ru.geekbrains.androidOne.lesson8.CardsSourceImpl;
 import ru.geekbrains.androidOne.lesson8.NotesAdapter;
@@ -56,14 +58,14 @@ public class MasterFragment extends Fragment {
         return new MasterFragment();
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // Получим источник данных для списка
-        // Поскольку onCreateView запускается каждый раз
-        // при возврате в фрагмент, данные надо создавать один раз
-        data = new CardsSourceImpl(getResources()).init();
-    }
+//    @Override
+//    public void onCreate(@Nullable Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        // Получим источник данных для списка из ресурсов
+//        // Поскольку onCreateView запускается каждый раз
+//        // при возврате в фрагмент, данные надо создавать один раз
+//        data = new CardsSourceImpl(getResources()).init();
+//    }
 
     // При создании фрагмента укажем его макет
     @Override
@@ -71,6 +73,13 @@ public class MasterFragment extends Fragment {
         // Получаем головной элемент из макета
         View view = inflater.inflate(R.layout.fragment_master, container, false);
         initView(view);
+        data = new CardsSourceFirebaseImpl().init(new CardsSourceResponse() {
+            @Override
+            public void initialized(CardsSource cardsData) {
+                adapter.notifyDataSetChanged();
+            }
+        });
+        adapter.setDataSource(data);
         return view;
     }
 
@@ -88,7 +97,7 @@ public class MasterFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         // Установим адаптер
-        adapter = new NotesAdapter(data, this);
+        adapter = new NotesAdapter(this);
         recyclerView.setAdapter(adapter);
         // Добавим разделитель карточек
         DividerItemDecoration itemDecoration = new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL);
