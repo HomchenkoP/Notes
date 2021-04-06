@@ -60,3 +60,4 @@ public class CardsSourceImpl implements CardsSource {
         dataSource.remove(position);
     }
 }
+

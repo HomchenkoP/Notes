@@ -19,3 +19,4 @@ public interface CardsSource {
 
     void deleteCardData(int position);
 }
+
