@@ -5,18 +5,17 @@ package ru.geekbrains.androidOne.lesson6;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
+import java.util.Date;
 
 public class NotesModel implements Parcelable {
 
-    private String title;
-    private String content;
-    private Calendar memoDate;
-    private Calendar createDate;
+    private String id;       // идентификатор
+    private String title;    // заголовок заметки
+    private String content;  // содержимое заметки
+    private Date memoDate;   // дата напоминания
+    private Date createDate; // дата создания/изменения заметки
 
-    public NotesModel(String title, String content, Calendar memoDate, Calendar createDate) {
+    public NotesModel(String title, String content, Date memoDate, Date createDate) {
         this.title = title;
         this.content = content;
         this.memoDate = memoDate;
@@ -26,24 +25,16 @@ public class NotesModel implements Parcelable {
     protected NotesModel(Parcel in) {
         this.title = in.readString();
         this.content = in.readString();
-        // значение memoDate собираем из миллисекунд и таймзоны
-//        this.memoDate = new GregorianCalendar(TimeZone.getTimeZone(in.readString()));
-//        this.memoDate.setTimeInMillis(in.readLong());
-//        // значение createDate собираем из миллисекунд и таймзоны
-//        this.createDate = new GregorianCalendar(TimeZone.getTimeZone(in.readString()));
-//        this.createDate.setTimeInMillis(in.readLong());
+//        this.memoDate = new Date(in.readLong());
+//        this.createDate = new Date(in.readLong());
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(title);
         dest.writeString(content);
-        // значение memoDate сохраняем по частям - миллисекунды и таймзону отдельно
-//        dest.writeString(memoDate.getTimeZone().getID());
-//        dest.writeLong(memoDate.getTimeInMillis());
-//        // значение createDate сохраняем по частям - миллисекунды и таймзону отдельно
-//        dest.writeString(createDate.getTimeZone().getID());
-//        dest.writeLong(createDate.getTimeInMillis());
+//        dest.writeLong(memoDate.getTime());
+//        dest.writeLong(createDate.getTime());
     }
 
     @Override
@@ -63,6 +54,14 @@ public class NotesModel implements Parcelable {
         }
     };
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -71,11 +70,11 @@ public class NotesModel implements Parcelable {
         return content;
     }
 
-    public Calendar getMemoDate() {
+    public Date getMemoDate() {
         return memoDate;
     }
 
-    public Calendar getCreateDate() {
+    public Date getCreateDate() {
         return createDate;
     }
 }

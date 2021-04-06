@@ -7,6 +7,9 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.app.Activity;
 import android.content.res.Configuration;
@@ -17,36 +20,61 @@ import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 
+import ru.geekbrains.androidOne.lesson9.Navigation;
+import ru.geekbrains.androidOne.lesson9.Publisher;
+
 // 1. ... Используйте подход Single Activity для отображения экранов.
 
 public class MainActivity extends AppCompatActivity {
+
+    private Navigation navigation;
+    private Publisher publisher = new Publisher();
+
+    public Navigation getNavigation() {
+        return navigation;
+    }
+
+    public Publisher getPublisher() {
+        return publisher;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        navigation = new Navigation(getSupportFragmentManager());
+
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             // в портретной ориентации
             if (savedInstanceState == null) {
                 // Если эта activity запускается первый раз
-                MasterFragment masterFragment = new MasterFragment();
                 // Добавим фрагмент на activity
-                // Чтобы программно вставить фрагмент, надо получить «Менеджер фрагментов», затем открыть транзакцию, вставить макет и закрыть транзакцию.
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .add(R.id.fragment_container, masterFragment)
-                        //.addToBackStack(null)
-                        .commit();
+                addFragment(new MasterFragment());
+                getNavigation().addFragment(MasterFragment.newInstance(), false);
             }
         }
         Toolbar toolbar = initToolbar();
         initDrawer(toolbar);
     }
 
+    private void addFragment(Fragment fragment) {
+        //Получить менеджер фрагментов
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        // Открыть транзакцию
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, fragment);
+        fragmentTransaction.addToBackStack(null);
+        // Закрыть транзакцию
+        fragmentTransaction.commit();
+    }
+
     private Toolbar initToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        // ???
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
         return toolbar;
     }
 
@@ -143,5 +171,12 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    // ???
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 }

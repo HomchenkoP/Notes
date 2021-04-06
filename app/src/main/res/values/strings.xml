@@ -8,5 +8,10 @@
     <string name="navigation_drawer_open">Открыть меню навигации</string>
     <string name="navigation_drawer_close">Закрыть меню навигации</string>
     <string name="forward">Переслать</string>
+    <string name="update">Изменить</string>
+    <string name="delete">Удалить</string>
+    <string name="cardData">Заметка</string>
+    <string name="title">Заголовок</string>
+    <string name="content">Заметка</string>
 
 </resources>
