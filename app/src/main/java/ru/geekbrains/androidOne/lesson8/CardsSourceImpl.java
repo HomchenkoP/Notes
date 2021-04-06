@@ -4,6 +4,7 @@ import android.content.res.Resources;
 
 import java.util.ArrayList;
 
+import ru.geekbrains.androidOne.lesson10.CardsSourceResponse;
 import ru.geekbrains.androidOne.lesson6.NotesModel;
 import ru.geekbrains.androidOne.lesson6.R;
 
@@ -18,7 +19,7 @@ public class CardsSourceImpl implements CardsSource {
         this.resources = resources;
     }
 
-    public CardsSourceImpl init(){
+    public CardsSource init(CardsSourceResponse cardsSourceResponse){
         // строки заголовков из ресурсов
         String[] titles = resources.getStringArray(R.array.titles);
         // строки описаний из ресурсов
@@ -27,6 +28,12 @@ public class CardsSourceImpl implements CardsSource {
         for (int i = 0; i < contents.length; i++) {
             dataSource.add(new NotesModel(titles[i], contents[i], null, null));
         }
+
+        // информируем, что данные проинициализированы и готовы
+        if (cardsSourceResponse != null){
+            cardsSourceResponse.initialized(this);
+        }
+
         return this;
     }
 
@@ -53,3 +60,4 @@ public class CardsSourceImpl implements CardsSource {
         dataSource.remove(position);
     }
 }
+
