@@ -20,14 +20,30 @@ import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 
+import ru.geekbrains.androidOne.lesson9.Navigation;
+import ru.geekbrains.androidOne.lesson9.Publisher;
+
 // 1. ... Используйте подход Single Activity для отображения экранов.
 
 public class MainActivity extends AppCompatActivity {
+
+    private Navigation navigation;
+    private Publisher publisher = new Publisher();
+
+    public Navigation getNavigation() {
+        return navigation;
+    }
+
+    public Publisher getPublisher() {
+        return publisher;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        navigation = new Navigation(getSupportFragmentManager());
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             // в портретной ориентации
@@ -35,12 +51,7 @@ public class MainActivity extends AppCompatActivity {
                 // Если эта activity запускается первый раз
                 // Добавим фрагмент на activity
                 addFragment(new MasterFragment());
-//                // Чтобы программно вставить фрагмент, надо получить «Менеджер фрагментов», затем открыть транзакцию, вставить макет и закрыть транзакцию.
-//                getSupportFragmentManager()
-//                        .beginTransaction()
-//                        .add(R.id.fragment_container, masterFragment)
-//                        //.addToBackStack(null)
-//                        .commit();
+                getNavigation().addFragment(MasterFragment.newInstance(), false);
             }
         }
         Toolbar toolbar = initToolbar();
@@ -61,6 +72,9 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar initToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        // ???
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
         return toolbar;
     }
 
@@ -157,5 +171,12 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    // ???
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 }
