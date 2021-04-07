@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import ru.geekbrains.androidOne.lesson10.CardsSourceFirebaseImpl;
 import ru.geekbrains.androidOne.lesson10.CardsSourceResponse;
+import ru.geekbrains.androidOne.lesson11.DeleteDialogFragment;
 import ru.geekbrains.androidOne.lesson8.CardsSource;
 import ru.geekbrains.androidOne.lesson8.CardsSourceImpl;
 import ru.geekbrains.androidOne.lesson8.NotesAdapter;
@@ -34,8 +35,9 @@ import ru.geekbrains.androidOne.lesson9.Publisher;
 
 // 2. Создайте фрагмент для вывода этих данных.
 // 1. ... Используйте подход Single Activity для отображения экранов.
+// 1. Создайте диалоговое окно с предупреждением перед удалением данных.
 
-public class MasterFragment extends Fragment {
+public class MasterFragment extends Fragment implements DeleteDialogFragment.DeleteDialogCaller {
 
     public static final String KEY_CURRENT_NOTE = "CurrentNote";
     private NotesModel currentNote; // Текущая позиция (выбранная заметка)
@@ -204,11 +206,27 @@ public class MasterFragment extends Fragment {
                 return true;
             case R.id.action_delete:
                 Toast.makeText(getContext(), "TODO Удалить заметку", Toast.LENGTH_SHORT).show();
-                data.deleteCardData(position);
-                adapter.notifyItemRemoved(position);
+                // диалоговое окно с предупреждением перед удалением данных
+                DeleteDialogFragment dialogFragment = new DeleteDialogFragment();
+                // пара методов setTargetFragment()/getTargetFragment() "переживает" пересоздание активити
+                dialogFragment.setTargetFragment(this, 0);
+                dialogFragment.show(getActivity().getSupportFragmentManager(), null);
                 return true;
         }
         return super.onContextItemSelected(item);
+    }
+
+     // Сюда передается управление при нажатии кнопки в диалоге
+     @Override
+     public void onDialogResult(String result) {
+        int position = adapter.getMenuPosition();
+        if (result.equals("DELETE")) {
+            Toast.makeText(getContext(), "Подтверждено удаление заметки " + position, Toast.LENGTH_SHORT).show();
+//            data.deleteCardData(position);
+//            adapter.notifyItemRemoved(position);
+        } else if (result.equals("CANCEL")) {
+            Toast.makeText(getContext(), "Отклонено удаление заметки " + position, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void initFloatingActionButton(View view) {
