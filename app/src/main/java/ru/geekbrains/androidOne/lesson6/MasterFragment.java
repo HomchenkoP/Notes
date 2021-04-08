@@ -1,6 +1,8 @@
 package ru.geekbrains.androidOne.lesson6;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
@@ -37,12 +39,13 @@ import ru.geekbrains.androidOne.lesson9.Publisher;
 // 1. ... Используйте подход Single Activity для отображения экранов.
 // 1. Создайте диалоговое окно с предупреждением перед удалением данных.
 
-public class MasterFragment extends Fragment implements DeleteDialogFragment.DeleteDialogCaller {
+public class MasterFragment extends Fragment {
 
     public static final String KEY_CURRENT_NOTE = "CurrentNote";
     private NotesModel currentNote; // Текущая позиция (выбранная заметка)
     private boolean isLandscape;
 
+    private static final int DELETE_DIALOG_FRAGMENT = 1;
     private static final int MY_DEFAULT_DURATION = 1000;
     private CardsSource data;
     private NotesAdapter adapter;
@@ -207,9 +210,9 @@ public class MasterFragment extends Fragment implements DeleteDialogFragment.Del
             case R.id.action_delete:
                 Toast.makeText(getContext(), "TODO Удалить заметку", Toast.LENGTH_SHORT).show();
                 // диалоговое окно с предупреждением перед удалением данных
-                DeleteDialogFragment dialogFragment = new DeleteDialogFragment();
+                DeleteDialogFragment dialogFragment = DeleteDialogFragment.newInstance(data.getCardData(position).getTitle());
                 // пара методов setTargetFragment()/getTargetFragment() "переживает" пересоздание активити
-                dialogFragment.setTargetFragment(this, 0);
+                dialogFragment.setTargetFragment(this, DELETE_DIALOG_FRAGMENT);
                 dialogFragment.show(getActivity().getSupportFragmentManager(), null);
                 return true;
         }
@@ -218,16 +221,22 @@ public class MasterFragment extends Fragment implements DeleteDialogFragment.Del
 
      // Сюда передается управление при нажатии кнопки в диалоге
      @Override
-     public void onDialogResult(String result) {
-        int position = adapter.getMenuPosition();
-        if (result.equals("DELETE")) {
-            Toast.makeText(getContext(), "Подтверждено удаление заметки " + position, Toast.LENGTH_SHORT).show();
-//            data.deleteCardData(position);
-//            adapter.notifyItemRemoved(position);
-        } else if (result.equals("CANCEL")) {
-            Toast.makeText(getContext(), "Отклонено удаление заметки " + position, Toast.LENGTH_SHORT).show();
-        }
-    }
+     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+         int position = adapter.getMenuPosition();
+         switch (requestCode) {
+             case DELETE_DIALOG_FRAGMENT:
+                 if (resultCode == Activity.RESULT_OK) {
+                     Toast.makeText(getContext(), "Подтверждено удаление заметки " + position, Toast.LENGTH_SHORT).show();
+//                     data.deleteCardData(position);
+//                     adapter.notifyItemRemoved(position);
+                     // дополнительные данные из диалога могут быть предены через Intent/Bundle
+                     //Bundle bundle = intent.getExtras();
+                 } else if (resultCode == Activity.RESULT_CANCELED) {
+                     Toast.makeText(getContext(), "Отклонено удаление заметки " + position, Toast.LENGTH_SHORT).show();
+                 }
+                 break;
+         }
+     }
 
     private void initFloatingActionButton(View view) {
         view.findViewById(R.id.floating_action_button).setOnClickListener(new View.OnClickListener() {
