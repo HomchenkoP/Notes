@@ -13,5 +13,8 @@
     <string name="cardData">Заметка</string>
     <string name="title">Заголовок</string>
     <string name="content">Заметка</string>
+    <string name="delete_dialog_title">Удаление заметки</string>
+    <string name="delete_dialog_pos_btn">Удалить</string>
+    <string name="delete_dialog_neg_btn">Отмена</string>
 
 </resources>
